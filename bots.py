@@ -9,25 +9,6 @@ URL='https://api.groupme.com/v3'
 GROUP_ID=config['group_id']
 BOT_FILE='bots.json'
 
-# hit a rest endpoint with the given params,
-# returning the result as a json object
-def get_rest(endpoint, params={}):
-    params['token'] = TOKEN
-    res = requests.get(URL + '/' + endpoint, params=params)
-    if (res.status_code == 200):
-        return json.loads(res.text)['response']
-    else:
-        return None
-
-def post_rest(endpoint, data={}, params={}, headers={}):
-    params['token'] = TOKEN
-    res = requests.post(URL + '/' + endpoint, data=json.dumps(data), params=params, headers=headers)
-    print(res.text)
-    if (res.status_code == 200 or res.status_code == 201):
-        return json.loads(res.text)['response']
-    else:
-        return None
-
 def bot_exists(user_id, bot_info):
     return user_id in bot_info.keys()
 
