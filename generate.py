@@ -13,8 +13,8 @@ SYS_KEYMAP = {
 }
 
 # load user information
-def load_user_info():
-    info_file = open('lastrun.json', 'r')
+def load_user_info(group_id):
+    info_file = open("groups/" + group_id + '/lastrun.json', 'r')
     info = json.loads(info_file.read())
     info_file.close()
     user_info = info['users']
@@ -44,13 +44,14 @@ def parse_system_event(text, keymap):
     return None, None
 
 # train a model for each user and a base model
-def train_user_models(user_info):
+def train_user_models(group_id, user_info):
+    group_dir = "groups/" + group_id
     models = {}
     all_lines = ''
     for u_id, u_info in user_info.items():
         print("Training model for " + u_info['names'][-1] + " | ID: " + u_id)
-        if os.path.isfile('members/' + u_id):
-            msg_file = open('members/' + u_id, 'r')
+        if os.path.isfile(group_dir + '/members/' + u_id):
+            msg_file = open(group_dir + '/members/' + u_id, 'r')
             text = msg_file.read()
             all_lines = all_lines + '\n' + text
             model = markovify.NewlineText(text)
@@ -62,9 +63,9 @@ def train_user_models(user_info):
     base_model = markovify.NewlineText(all_lines)
     return models, base_model
 
-def train_event_model(user_info):
+def train_event_model(group_id, user_info):
     # train on the event chain
-    event_file = open('eventlog', 'r')
+    event_file = open("groups/" + group_id + '/eventlog', 'r')
     events = []
     event_counts = defaultdict(lambda: defaultdict(int))
     event_totals = defaultdict(int)
@@ -117,11 +118,3 @@ def gen_events(event_model, models, user_info):
         else:
             print(">>>>>>>SYSTEM EVENT")
             print(last_nickname(event_user, user_info) + SYS_KEYMAP[event_type])
-
-# user_info = load_user_info()
-# models, base_model = train_user_models()
-# event_model = train_event_model()
-
-# for i in range(0, 10):
-    # gen_events(event_model, models)
-

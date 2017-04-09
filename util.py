@@ -35,6 +35,7 @@ def get_rest(endpoint, params={}):
     if (res.status_code == 200):
         return json.loads(res.text)['response']
     else:
+        print(res.text)
         return None
 
 # hit a post rest endpoint with the given params,

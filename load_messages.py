@@ -1,10 +1,10 @@
 import json, requests, datetime, sys, os, util
 from collections import defaultdict
 
-def main(reset):
-    GROUP_ID = util.CONFIG['group_id']
-    LAST_RUN = 'lastrun.json'
-    EVENT_LOG = 'eventlog'
+def main(group_id, reset):
+    GROUP_DIR = "groups/" + group_id
+    LAST_RUN = GROUP_DIR + '/lastrun.json'
+    EVENT_LOG = GROUP_DIR + '/eventlog'
 
     # Command line arg to start completely fresh
     # WARNING: Deletes all your old messages
@@ -16,6 +16,7 @@ def main(reset):
     # or if this is the first run
     if RESET or not os.path.isfile(LAST_RUN):
         print('Resetting last run information')
+        last_id = 0
         last_info = {}
         seen_messages = 0
         user_info = defaultdict(dict)
@@ -43,7 +44,7 @@ def main(reset):
     user_avatars = defaultdict(list)
 
     # load message count
-    message_info = util.get_rest('groups/' + str(GROUP_ID) + '/messages', message_params)
+    message_info = util.get_rest('groups/' + group_id + '/messages', message_params)
     if not message_info:
         print("No more messages to load")
     else:
@@ -76,7 +77,7 @@ def main(reset):
             # Load the next batch of messages, going forward or backward
             # based on the reset flag
             message_params[param_mode] = last_id
-            message_info = util.get_rest('groups/' + str(GROUP_ID) + '/messages', message_params)
+            message_info = util.get_rest('groups/' + group_id + '/messages', message_params)
 
         print("Writing event log")
         event_log_file = open(EVENT_LOG, file_mode)
@@ -86,7 +87,7 @@ def main(reset):
 
         print("Writing user message logs")
         for user_id,messages in user_messages.items():
-            outfile = open('members/' + user_id, file_mode)
+            outfile = open(GROUP_DIR + '/members/' + user_id, file_mode)
             for m in messages:
                 print(m, file=outfile)
             outfile.close()
@@ -118,4 +119,4 @@ def main(reset):
     print("Done")
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
