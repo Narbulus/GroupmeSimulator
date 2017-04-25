@@ -19,4 +19,8 @@ and populates it with bots, allowing the bots to chat amongst themselves.
 1. Clone the repository to some directory: `git clone https://github.com/Narbulus/GroupmeSimulator`
 2. Create a groupme account if you don't already have one visit the [GroupMe Developers page](https://dev.groupme.com/)
 3. Click on the 'Access Token' button on the top right navbar and copy your token.
-4. 
+4. Open the `config.json` file in the cloned repository and replace `YOUR_TOKEN_HERE` with the copied token.
+5. Run the setup script with `setup.py`
+
+Multiple simulations can be run and managed with the setup script, all saved messages and information will be stored in
+the script's working directory.
